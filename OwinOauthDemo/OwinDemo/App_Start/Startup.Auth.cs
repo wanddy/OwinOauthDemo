@@ -22,7 +22,8 @@ namespace OwinDemo
                 TokenEndpointPath = new PathString("/token"),
                 Provider = new GoldenKeyAuthorizationServerProvider(),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
-                AllowInsecureHttp = true
+                AllowInsecureHttp = true,
+                RefreshTokenProvider = new GoldenKeyRefreshTokenProvider()
             };
 
             app.UseOAuthBearerTokens(OAuthOptions);

@@ -30,7 +30,11 @@ namespace OwinDemo
         {
             var oAuthIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
             oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, "iOS App"));      //待续工作 考察 "iOS App" 的意义
-            var ticket = new AuthenticationTicket(oAuthIdentity, new AuthenticationProperties());
+            var props = new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    { "as:client_id", context.ClientId }
+                });
+            var ticket = new AuthenticationTicket(oAuthIdentity, props);
             context.Validated(ticket);
 
             return base.GrantClientCredentials(context);
@@ -55,6 +59,26 @@ namespace OwinDemo
             context.Validated(ticket);
 
             await base.GrantResourceOwnerCredentials(context);
+        }
+
+        public override async Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
+        {
+            var originalClient = context.Ticket.Properties.Dictionary["as:client_id"];  //反序列化得到的clientId
+            var currentClient = context.ClientId;   //新请求中的clientId
+
+            if (originalClient != currentClient)
+            {
+                context.Rejected();
+                return;
+            }
+
+            var newId = new ClaimsIdentity(context.Ticket.Identity);    //新的refreshId的ticketId
+            newId.AddClaim(new Claim("newClaim", "refreshToken"));  //。。。
+
+            var newTicket = new AuthenticationTicket(newId, context.Ticket.Properties);     //根据旧的ticket创建新的ticket
+            context.Validated(newTicket);   //将新的 ticket 设置为当前context的ticket（将就旧的覆盖掉了）
+
+            await base.GrantRefreshToken(context);
         }
     }
 }

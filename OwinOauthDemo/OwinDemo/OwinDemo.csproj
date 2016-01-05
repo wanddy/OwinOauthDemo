@@ -173,6 +173,7 @@
   <ItemGroup>
     <Compile Include="GoldenKeyAuthorizationServerProvider.cs" />
     <Compile Include="Controllers\UserAboutController.cs" />
+    <Compile Include="GoldenKeyRefreshTokenProvider.cs" />
     <Compile Include="UserService.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
