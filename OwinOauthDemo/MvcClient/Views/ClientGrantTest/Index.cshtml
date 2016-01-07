@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    var accessToken = '',
+        refreshToken = '';
+    $(function () {
+        $("#btnAccessToken").click(function () {
+            $.get('/ClientGrantTest/GetAccessToken', {}, function (data) {
+                alert(data);
+                var evalData = eval("(" + data + ")");//eval(data);
+                //alert(evalData.access_token);
+                accessToken = evalData.access_token;
+                refreshToken = evalData.refresh_token;
+            });
+        });
+        $("#btnGetResource").click(function () {
+            $.get('/ClientGrantTest/GetResource', {}, function (data) {
+                alert(data);
+            });
+        });
+        $("#btnRefresh").click(function () {
+            $.get('/ClientGrantTest/RefreshAccessToken', { refreshToken: refreshToken, refreshToken: refreshToken }, function (data) {
+                alert(data);
+                var evalData = eval("(" + data + ")");//eval(data);
+                accessToken = evalData.access_token;
+                refreshToken = evalData.refresh_token;
+            });
+        });
+    });
+</script>
+
+<button id="btnAccessToken">获取access_Token</button><br />
+
+<button id="btnGetResource">获取资源</button>
+
+<button id="btnRefresh">刷新access Token</button>
+

@@ -1,20 +1,21 @@
-﻿using DapperDal;
-using OwinDemo.AuthorizationServer.Model;
-using OwinDemo.AuthorizationServer.Services;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Mvc;
 
-namespace OwinDemo.Controllers
+namespace MvcClient.Controllers
 {
     public class HomeController : Controller
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
             return View();
         }
+
+        
     }
 }
