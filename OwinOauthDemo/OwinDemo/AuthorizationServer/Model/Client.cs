@@ -10,8 +10,8 @@ namespace OwinDemo.AuthorizationServer.Model
         public string Id { get; set; }
         public string Secret { get; set; }
         public string Name { get; set; }
-        public bool IsActive { get; set; }
-        public int RefreshTokenLifeTime { get; set; }
-        public DateTime DateAdded { get; set; }
+        public Int64 Active { get; set; }
+        public Int64 RefreshTokenLifeTime { get; set; }
+        public string DateAdded { get; set; }
     }
 }

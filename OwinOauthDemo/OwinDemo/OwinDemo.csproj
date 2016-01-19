@@ -44,11 +44,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper">
+      <HintPath>..\packages\Dapper.1.8\lib\net40\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="SQLinq">
+      <HintPath>..\packages\SQLinq.2.0\lib\net\SQLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLinq.Dapper">
+      <HintPath>..\packages\SQLinq.Dapper.1.2\lib\net\SQLinq.Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
@@ -178,9 +187,8 @@
     <Compile Include="AuthorizationServer\DapperDal\ClientDal.cs" />
     <Compile Include="AuthorizationServer\DapperDal\RefreshTokenDal.cs" />
     <Compile Include="AuthorizationServer\Model\Client.cs" />
-    <Compile Include="AuthorizationServer\Model\Querys.cs" />
+    <Compile Include="AuthorizationServer\Model\SqlCUD.cs" />
     <Compile Include="AuthorizationServer\Model\RefreshToken.cs" />
-    <Compile Include="AuthorizationServer\Dapper\Dapper.cs" />
     <Compile Include="AuthorizationServer\GoldenKeyAuthorizationServerProvider.cs" />
     <Compile Include="AuthorizationServer\Services\ClientService.cs" />
     <Compile Include="AuthorizationServer\Services\RefreshTokenService.cs" />

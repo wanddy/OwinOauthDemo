@@ -14,13 +14,13 @@ namespace OwinDemo.AuthorizationServer.Services
 
         public async Task<Client> GetClientById(string clientId)
         {
-            Client client = (await clientDal.GetEntities()).Where(i => i.Id == clientId).First();
+            Client client = (clientDal.GetEntities(m=>true)).Where(i => i.Id == clientId).First();
             return client;
         }
 
         public async Task<bool> Save(Client client)
         {
-            if (await clientDal.Insert(client) > 0)
+            if (clientDal.Insert(client) > 0)
             {
                 return true;
             }

@@ -26,7 +26,7 @@ namespace MvcClient.Controllers
                 if (_httpClient == null)
                 {
                     _httpClient = new HttpClient();
-                    //_httpClient.BaseAddress = new Uri("http://openapi.cnblogs.com");
+                    _httpClient.BaseAddress = new Uri("http://localhost:4282");     //发送请求时的基地址
                 }
                 return _httpClient;
             }
@@ -41,10 +41,11 @@ namespace MvcClient.Controllers
             parameters.Add("username", "goldenkey");
             parameters.Add("password", "123");
 
+            //用http basic authentication header将clientId，clientSecret传给authentication server
             HtpClient.DefaultRequestHeaders.Authorization = 
                 new AuthenticationHeaderValue("Basic",Convert.ToBase64String(Encoding.ASCII.GetBytes(clientId + ":" + clientSecret)));
 
-            string responseValue = HtpClient.PostAsync("http://localhost:4282/token", new FormUrlEncodedContent(parameters)).Result.Content.ReadAsStringAsync().Result;
+            string responseValue = HtpClient.PostAsync("/token", new FormUrlEncodedContent(parameters)).Result.Content.ReadAsStringAsync().Result;
             string acessToken = JObject.Parse(responseValue)["access_token"].Value<string>();
             HttpContext.Cache.Insert("accessToken", acessToken);
 
@@ -62,7 +63,7 @@ namespace MvcClient.Controllers
             HtpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(clientId + ":" + clientSecret)));
 
-            string responseValue = HtpClient.PostAsync("http://localhost:4282/token", new FormUrlEncodedContent(parameters)).Result.Content.ReadAsStringAsync().Result;
+            string responseValue = HtpClient.PostAsync("/token", new FormUrlEncodedContent(parameters)).Result.Content.ReadAsStringAsync().Result;
             string acessToken = JObject.Parse(responseValue)["access_token"].Value<string>();
             HttpContext.Cache.Insert("accessToken", acessToken);
 
@@ -73,7 +74,7 @@ namespace MvcClient.Controllers
         {
             string token = HttpContext.Cache.Get("accessToken").ToString();
             HtpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var responseValue = HtpClient.GetAsync("http://localhost:4282/api/values").Result.Content.ReadAsStringAsync().Result;
+            var responseValue = HtpClient.GetAsync("/api/values").Result.Content.ReadAsStringAsync().Result;
             return responseValue;
         }
     }

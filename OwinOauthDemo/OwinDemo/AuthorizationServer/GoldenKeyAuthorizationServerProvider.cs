@@ -13,9 +13,10 @@ namespace OwinDemo
     public class GoldenKeyAuthorizationServerProvider : OAuthAuthorizationServerProvider
     {
         private ClientService clientService = new ClientService();
+        
+        //客户端验证
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            
             string clientId;
             string clientSecret;
             if (!context.TryGetBasicCredentials(out clientId, out clientSecret)) { return; }
@@ -24,17 +25,21 @@ namespace OwinDemo
             if (client == null) { return; }
             if (client.Secret != clientSecret) { return; }
             
+            //向OwinContext写入以下两条数据，在GoldenKeyRefreshTokenProvider中会用到
             context.OwinContext.Set<string>("as:client_id", client.Id);
             context.OwinContext.Set<string>("as:clientRefreshTokenLifeTime", client.RefreshTokenLifeTime.ToString());
+
             context.Validated(client.Id);
         }
 
+        //客户端授权
         public override async Task GrantClientCredentials(OAuthGrantClientCredentialsContext context)
         {
             var oAuthIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
             context.Validated(oAuthIdentity);
         }
 
+        //passWord方式授权
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             var oAuthIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
@@ -48,6 +53,7 @@ namespace OwinDemo
             context.Validated(oAuthIdentity);
         }
 
+        //RefreshToken授权
         public override async Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
         {
             var newId = new ClaimsIdentity(context.Ticket.Identity);    //新的refreshId的ticketId

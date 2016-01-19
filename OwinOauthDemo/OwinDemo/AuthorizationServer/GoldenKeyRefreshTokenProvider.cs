@@ -14,32 +14,6 @@ namespace OwinDemo
 {
     public class GoldenKeyRefreshTokenProvider: AuthenticationTokenProvider
     {
-        //private static ConcurrentDictionary<string, string> _refreshTokens = new ConcurrentDictionary<string, string>();
-
-        /*
-        public override void Create(AuthenticationTokenCreateContext context) 
-        {
-            string tokenValue = Guid.NewGuid().ToString("n");       //生成新的refresh token
-
-            context.Ticket.Properties.IssuedUtc = DateTime.UtcNow;                  //？这个是设置谁的有效时间
-            context.Ticket.Properties.ExpiresUtc = DateTime.UtcNow.AddDays(60);
-
-            _refreshTokens[tokenValue] = context.SerializeTicket();     // 将刷新access token需要的ticket信息序列化，并保存
-
-            context.SetToken(tokenValue);   //设置refreshToken
-        }
-
-        public override void Receive(AuthenticationTokenReceiveContext context)
-        {
-            string value; 
-            if (_refreshTokens.TryRemove(context.Token, out value))     //删除原来的原来的token
-            {
-                context.DeserializeTicket(value);       //反序列化，得到刷新access token需要的ticket信息
-            }
-        }*/
-
-        //-----------------------------------------------------------------------------------------
-
         RefreshTokenService _refreshTokenService = new RefreshTokenService();
         public override async Task CreateAsync(AuthenticationTokenCreateContext context)
         {
@@ -57,18 +31,24 @@ namespace OwinDemo
             cryptoRandomDataGenerator.GetBytes(buffer);
             var refreshTokenId = Convert.ToBase64String(buffer).TrimEnd('=').Replace('+', '-').Replace('/', '_');
 
+            DateTime issuedUtc = DateTime.UtcNow;
+            DateTime expireUtc = DateTime.UtcNow.AddSeconds(Convert.ToDouble(refreshTokenLifeTime));
+
             var refreshToken = new RefreshToken()
             {
                 Id = refreshTokenId,
                 ClientId = new Guid(clietId).ToString(),
                 UserId = context.Ticket.Identity.Name,
-                IssuedUtc = DateTime.UtcNow,
-                ExpiresUtc = DateTime.UtcNow.AddSeconds(Convert.ToDouble(refreshTokenLifeTime)),
-                ProtectedTicket = context.SerializeTicket()
+                IssuedUtc = issuedUtc.ToString(),
+                ExpiresUtc = expireUtc.ToString(),
+               // ProtectedTicket = context.SerializeTicket()
             };
 
-            context.Ticket.Properties.IssuedUtc = refreshToken.IssuedUtc;           //这两句代码的意思：设置accessToken or refreshtoken
-            context.Ticket.Properties.ExpiresUtc = refreshToken.ExpiresUtc;
+            context.Ticket.Properties.IssuedUtc = issuedUtc;
+            context.Ticket.Properties.ExpiresUtc = expireUtc;
+
+            //先设置过期时间，再序列化protectedTicket，出处：http://www.cnblogs.com/dudu/p/4721797.html
+            refreshToken.ProtectedTicket = context.SerializeTicket();
 
             //删除之前refreshToken，出处：http://www.cnblogs.com/dudu/p/4679592.html
             await _refreshTokenService.RemoveByClientIdAndUserId(clietId, context.Ticket.Identity.Name);        
@@ -88,7 +68,7 @@ namespace OwinDemo
             if (refreshToken != null)
             {
                 context.DeserializeTicket(refreshToken.ProtectedTicket);
-                var result = _refreshTokenService.Remove(context.Token);
+                var result = _refreshTokenService.Remove(refreshToken);
             }
         }
     }

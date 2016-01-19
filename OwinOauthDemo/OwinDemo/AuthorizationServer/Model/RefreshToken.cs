@@ -14,9 +14,9 @@ namespace OwinDemo.AuthorizationServer.Model
 
         public string ClientId { get; set; }
 
-        public DateTime IssuedUtc { get; set; }
+        public string IssuedUtc { get; set; }
 
-        public DateTime ExpiresUtc { get; set; }
+        public string ExpiresUtc { get; set; }
 
         public string ProtectedTicket { get; set; }
     }

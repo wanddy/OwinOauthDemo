@@ -9,96 +9,124 @@ using Dapper;
 using System.Configuration;
 using System.Data.SQLite;
 using OwinDemo.AuthorizationServer.Model;
+using SQLinq;
+using SQLinq.Dapper;
+using System.Linq.Expressions;
 
 namespace DapperDal
 {
     public abstract class BaseDal<T> where T:new()
     {
-        //set querys for different tables
+        //set sqlCUD for different tables
         public BaseDal()
         {
-            SetQuerys();
+            SetSqlCUD();
         }
-        protected Querys querys = new Querys();
-        public abstract void SetQuerys();
+        protected SqlCUD sqlCUD = new SqlCUD();
+        public abstract void SetSqlCUD();
 
         //get a conncection
         private static readonly string sqlconnection = @"Data Source=" + AppDomain.CurrentDomain.BaseDirectory + @"\App_Data\AuthData.db;Version=3;";
-        public SQLiteConnection GetOpenConnection()
+        public IDbConnection GetOpenConnection()
         {
-            SQLiteConnection connection = new SQLiteConnection(sqlconnection);
+            IDbConnection connection = new SQLiteConnection(sqlconnection);
             connection.Open();
             return connection;
         }
 
 
+        #region query
 
         //getEntities
-        public async Task<List<T>> GetEntities()
+        public IEnumerable<T> GetEntities(Expression<Func<T, bool>> predicate)
         {
             using (IDbConnection conn = GetOpenConnection())
             {
-                string query = querys.GetEntities;//"select * from Users order by sid desc";
-                IEnumerable<T> users = conn.Query<T>(query, null);
-                return users.ToList<T>();
+                try
+                {
+                    SQLinq<T> query = new SQLinq<T>().Where(predicate);
+                    return conn.Query<T>(query);
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
 
-        /*
         //getPagedEntities
-        public List<T> GetPagedEntities<Tkey>(int pageSize, int pageIndex, out int total, Func<T, bool> whereLambda, Func<T, Tkey> orderbyLambda, bool isAsc)
+        public IEnumerable<T> GetPagedEntities(int pageSize, int pageIndex, out int total, Expression<Func<T, bool>> predicate, Expression<Func<T, object>> keySelector, bool isAsc)
         {
-            total = GetEntities(whereLambda).Count;
+            int skipCount = pageSize * (pageIndex - 1);
+            total = 0;
+            //create  sqlQuery
+            SQLinq<T> query = new SQLinq<T>().Where(predicate);
             if (isAsc)
             {
-                var temp = GetEntities(whereLambda)
-                    .OrderBy<T, Tkey>(orderbyLambda)
-                    .Skip(pageSize * (pageIndex - 1))
-                    .Take(pageSize);
-                return temp.ToList<T>();
+                query = query.OrderBy(keySelector);
             }
             else
             {
-                var temp = GetEntities(whereLambda)
-                    .OrderByDescending<T, Tkey>(orderbyLambda)
-                    .Skip(pageSize * (pageIndex - 1))
-                    .Take(pageSize);
-                return temp.ToList<T>();
+                query = query.OrderByDescending(keySelector);
             }
-        }*/
+            query.Skip(skipCount).Take(pageSize);
+            //do  query
+            return Query(query);
+        }
 
+        #endregion
+
+        #region CUD
         //insert
-        public async Task<int> Insert(T entity)
+        public int Insert(T entity)
         {
             using (IDbConnection conn = GetOpenConnection())
             {
-                string query = querys.Add;//"insert into Users(sName,sGender,sAge) values(@sNmae,@sGender,@sAge)";
+                string query = sqlCUD.Add;//"insert into Users(sName,sGender,sAge) values(@sNmae,@sGender,@sAge)";
                 int row = conn.Execute(query, entity);//new {sName="GoldenKey",sGender=true,sAge=22 });
                 return row;
             }
         }
 
         //update
-        public async Task<int> Update(T entity)
+        public int Update(T entity)
         {
             using (IDbConnection conn = GetOpenConnection())
             {
-                string query = querys.Update;//"update Users set sName=@sName,sGender=@sGender,sAge=@sAge where sId=@sId";
+                string query = sqlCUD.Update;//"update Users set sName=@sName,sGender=@sGender,sAge=@sAge where sId=@sId";
                 int row = conn.Execute(query, entity);
                 return row;
             }
         }
 
         //delete
-        public async Task<int> Delete(T entity)
+        public int Delete(T entity)
         {
             using (IDbConnection conn = GetOpenConnection())
             {
-                string query = querys.Delete;//"delete from Users where sId=@sId";
+                string query = sqlCUD.Delete;//"delete from Users where sId=@sId";
                 int row = conn.Execute(query, entity);
                 return row;
             }
         }
+        #endregion
+
+        #region Helper Methods
+        private IEnumerable<T> Query(SQLinq<T> query)
+        {
+            try
+            {
+                using (IDbConnection dbConnection = GetOpenConnection())
+                {
+                    return dbConnection.Query<T>(query);
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        #endregion
 
 
 

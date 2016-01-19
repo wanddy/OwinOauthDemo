@@ -21,7 +21,7 @@ namespace OwinDemo
             {
                 TokenEndpointPath = new PathString("/token"),
                 Provider = new GoldenKeyAuthorizationServerProvider(),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
+                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(3),        //设置accessToken的过期时间
                 AllowInsecureHttp = true,
                 RefreshTokenProvider = new GoldenKeyRefreshTokenProvider()
             };

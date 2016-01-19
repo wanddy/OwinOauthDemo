@@ -14,7 +14,7 @@ namespace OwinDemo.AuthorizationServer.Services
 
         public async Task<bool> Save(RefreshToken refreshToken)
         {
-            if (await rfDal.Insert(refreshToken) > 0)
+            if (rfDal.Insert(refreshToken) > 0)
             {
                 return true;
             }
@@ -23,14 +23,13 @@ namespace OwinDemo.AuthorizationServer.Services
 
         public async Task<RefreshToken> Get(string refreshTokenId)
         {
-            RefreshToken refreshToken = (await rfDal.GetEntities()).Where(i=>i.Id==refreshTokenId).First();
+            RefreshToken refreshToken = (rfDal.GetEntities(i => i.Id == refreshTokenId)).First();
             return refreshToken;
         }
 
-        public async Task<bool> Remove(string refreshTokenId)
+        public async Task<bool> Remove(RefreshToken refreshToken)
         {
-            RefreshToken refreshToken =await this.Get(refreshTokenId);
-            if (await rfDal.Delete(refreshToken) > 0)
+            if (rfDal.Delete(refreshToken) > 0)
             {
                 return true;
             }
@@ -44,7 +43,7 @@ namespace OwinDemo.AuthorizationServer.Services
                 ClientId = clientId,
                 UserId = userId
             };
-            await rfDal.DeleteByClientIdAndUserId(refreshToken);
+            rfDal.DeleteByClientIdAndUserId(refreshToken);
         }
     }
 }
