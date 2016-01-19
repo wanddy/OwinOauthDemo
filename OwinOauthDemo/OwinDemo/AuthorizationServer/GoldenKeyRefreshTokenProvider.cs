@@ -6,11 +6,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
-using DapperDal;
-using OwinDemo.AuthorizationServer.Services;
-using OwinDemo.AuthorizationServer.Model;
+using AuthorizationServer.DapperDal;
+using AuthorizationServer.Services;
+using AuthorizationServer.Model;
 
-namespace OwinDemo
+namespace AuthorizationServer
 {
     public class GoldenKeyRefreshTokenProvider: AuthenticationTokenProvider
     {

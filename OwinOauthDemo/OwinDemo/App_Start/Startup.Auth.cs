@@ -10,6 +10,7 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using OwinDemo.Providers;
 using OwinDemo.Models;
+using AuthorizationServer;
 
 namespace OwinDemo
 {

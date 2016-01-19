@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
-using OwinDemo.AuthorizationServer.Services;
+using AuthorizationServer.Services;
+using OwinDemo;
 
-namespace OwinDemo
+namespace AuthorizationServer
 {
     public class GoldenKeyAuthorizationServerProvider : OAuthAuthorizationServerProvider
     {
@@ -44,6 +45,7 @@ namespace OwinDemo
         {
             var oAuthIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
             
+            //Custom code for Match user
             if (!UserService.Login(context.UserName, context.Password))     //判断用户名、密码是否正确
             {
                 return;

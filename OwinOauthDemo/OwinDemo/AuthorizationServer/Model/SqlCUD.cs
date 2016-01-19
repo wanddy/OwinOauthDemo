@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OwinDemo.AuthorizationServer.Model
+namespace AuthorizationServer.Model
 {
     public class SqlCUD
     {

@@ -1,6 +1,6 @@
-﻿using DapperDal;
-using OwinDemo.AuthorizationServer.Model;
-using OwinDemo.AuthorizationServer.Services;
+﻿using AuthorizationServer.DapperDal;
+using AuthorizationServer.Model;
+using AuthorizationServer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

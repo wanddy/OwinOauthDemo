@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace OwinDemo.AuthorizationServer.Model
+namespace AuthorizationServer.Model
 {
     public class Client
     {

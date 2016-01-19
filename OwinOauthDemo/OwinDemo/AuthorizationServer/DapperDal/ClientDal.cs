@@ -1,11 +1,11 @@
-﻿using DapperDal;
-using OwinDemo.AuthorizationServer.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using AuthorizationServer.DapperDal;
+using AuthorizationServer.Model;
 
-namespace OwinDemo.AuthorizationServer.DapperDal
+namespace AuthorizationServer.DapperDal
 {
     public class ClientDal : BaseDal<Client>
     {

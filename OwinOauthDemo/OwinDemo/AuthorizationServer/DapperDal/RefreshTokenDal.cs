@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OwinDemo.AuthorizationServer.Model;
+using AuthorizationServer.Model;
 using System.Data;
 using Dapper;
 
-namespace DapperDal
+namespace AuthorizationServer.DapperDal
 {
     class RefreshTokenDal:BaseDal<RefreshToken>
     {

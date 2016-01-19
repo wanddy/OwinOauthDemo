@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using OwinDemo.AuthorizationServer.DapperDal;
-using OwinDemo.AuthorizationServer.Model;
+using AuthorizationServer.DapperDal;
+using AuthorizationServer.Model;
 using System.Threading.Tasks;
 
-namespace OwinDemo.AuthorizationServer.Services
+namespace AuthorizationServer.Services
 {
     public class ClientService
     {

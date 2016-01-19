@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using Dapper;
 using System.Configuration;
 using System.Data.SQLite;
-using OwinDemo.AuthorizationServer.Model;
+using AuthorizationServer.Model;
 using SQLinq;
 using SQLinq.Dapper;
 using System.Linq.Expressions;
 
-namespace DapperDal
+namespace AuthorizationServer.DapperDal
 {
     public abstract class BaseDal<T> where T:new()
     {
